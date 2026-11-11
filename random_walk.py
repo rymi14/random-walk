@@ -217,12 +217,44 @@ def build_parser() -> argparse.ArgumentParser:
         help="Save the results in the 'results/' folder."
     )
 
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Run the simulation even if the estimated memory exceeds the limit."
+    )
+
     return parser
 
 
+# Approximate memory required per step of the walk:
+#   1 position dict ({"x", "y"} = 184 B) + 1 zero-padded key (47 B)
+#   + its entry in step_dict + the reference in the displacement array ≈ 300 bytes
+BYTES_PER_STEP = 300
+MEMORY_LIMIT_GB = 1.5
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+
+    # First, the values are filled in, because the subsequent memory
+    # check needs to know how many steps will be used.
     args = fill_missing(args)
+
+    memory_gb = args.steps * BYTES_PER_STEP / 1e9
+    if memory_gb > MEMORY_LIMIT_GB and not args.force:
+        maximum = int(MEMORY_LIMIT_GB * 1e9 / BYTES_PER_STEP)
+        print()
+        print(
+            f"  --steps {args.steps:,} requires "
+            f"{memory_gb:.1f} GB of memory,\n"
+            f"and the safety limit is {MEMORY_LIMIT_GB} GB.",
+            file=sys.stderr
+        )
+        print(
+            f"  Use --steps {maximum:,} or less, or add --force\n"
+            f"  if you really want to try.",
+            file=sys.stderr
+        )
+        return 1
 
     if args.seed is None:
         args.seed = int(np.random.SeedSequence().generate_state(1)[0])
