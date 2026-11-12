@@ -128,7 +128,7 @@ def fill_missing(args: argparse.Namespace) -> argparse.Namespace:
 # Walking calculation
 #------------------------------------------------------------------------------------------
 
-def random_walks(steps: int, rng: np.random.Generator) -> dict[str, dict[str, int]]:
+def random_walk(steps: int, rng: np.random.Generator) -> list[dict[str, int]]:
 
     position = {
         "x": 0,
@@ -143,20 +143,16 @@ def random_walks(steps: int, rng: np.random.Generator) -> dict[str, dict[str, in
     ]
     Dposition = rng.choice(displacements, size=steps)
 
-    digits = len(str(steps))
-
-    step_dict = {
-        f"{0:0{digits}d}": {"x": 0, "y": 0}
-    }
-    for i, delta in enumerate(Dposition, start=1):
+    step_list = [position.copy()]
+    for delta in Dposition:
 
         position = {
             "x": position["x"] + delta["Dx"],
             "y": position["y"] + delta["Dy"]
         }
-        step_dict[f"{i:0{digits}d}"] = position
+        step_list.append(position)
 
-    return step_dict
+    return step_list
 
 
 #------------------------------------------------------------------------------------------
@@ -167,7 +163,7 @@ def save_json(route: Path, data: dict) -> None:
     route.parent.mkdir(parents=True, exist_ok=True)
     with route.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
-    print(f"  The results were saved in {route}.")
+    print(f"  The results were saved in {route}")
 
 
 #------------------------------------------------------------------------------------------
@@ -227,9 +223,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 # Approximate memory required per step of the walk:
-#   1 position dict ({"x", "y"} = 184 B) + 1 zero-padded key (47 B)
-#   + its entry in step_dict + the reference in the displacement array ≈ 300 bytes
-BYTES_PER_STEP = 300
+#   1 position dict ({"x", "y"} ≈ 184 B) + its entry in the step list
+#   + the reference in the displacement array ≈ 230 bytes
+#   (measured with tracemalloc: 221 B at 200,000 steps, 231 B at 500,000;
+#   rounded up to leave a margin)
+BYTES_PER_STEP = 250
 MEMORY_LIMIT_GB = 1.5
 
 def main(argv: list[str] | None = None) -> int:
@@ -261,10 +259,10 @@ def main(argv: list[str] | None = None) -> int:
 
     rng = np.random.default_rng(args.seed)
 
-    print("\n  Simulation of the random displacement of a particle.")
+    print("  Simulation of the random displacement of a particle.")
     print(f"  Seed: {args.seed}")
 
-    hike = random_walks(args.steps, rng)
+    hike = random_walk(args.steps, rng)
 
     if args.save:
         save_json(
@@ -275,6 +273,8 @@ def main(argv: list[str] | None = None) -> int:
                 "path": hike
             }
         )
+        print("  To obtain the graph, run:")
+        print("    python3 plot_results.py\n")
 
     return 0
 
