@@ -46,7 +46,10 @@ def displacement_plot() -> bool:
     fig, ax = plt.subplots(figsize=(10, 10))
 
     ax.plot(x, y, linestyle="-", color="crimson",
-            label="Movements", zorder=2)
+            linewidth=0.5, alpha=0.6, label="Movements", zorder=2)
+
+    ax.scatter(x[0], y[0], color="green", s=45, zorder=3, label="Start")
+    ax.scatter(x[-1], y[-1], color="blue", s=45, zorder=3, label="End")
 
     ax.set_title(f"Random walk — {data['steps']:,} steps (seed {data['seed']})")
     ax.set_xlabel("X")
