@@ -268,7 +268,7 @@ def main(argv: list[str] | None = None) -> int:
         save_json(
             Path("results") / "walking_results.json",
             {
-                "number of steps": args.steps,
+                "steps": args.steps,
                 "seed": args.seed,
                 "path": hike
             }
