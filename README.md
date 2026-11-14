@@ -50,8 +50,8 @@ cells need molecular motors to transport cargo.
 1. **Sampling.** The `steps` displacements are drawn in one vectorized call
    to `np.random.Generator.choice()` over the four unit vectors:
 
-   ```
-   (0, +1)   (0, −1)   (+1, 0)   (−1, 0)
+   ```text
+   (0, +1)   (0, -1)   (+1, 0)   (-1, 0)
    ```
 
 2. **Accumulation.** Each displacement is added to the current position and
@@ -103,34 +103,34 @@ cells need molecular motors to transport cargo.
 Run the simulation and generate the plot:
 
 ```bash
-python random_walk.py --steps 10000 --seed 42 --save
-python plot_results.py
+python3 random_walk.py --steps 100000 --seed 42 --save
+python3 plot_results.py
 ```
 
 ### The path of the particle
 
-Ten thousand unit steps from a fixed seed. The black lines cross at the
-origin, the green dot is where the walk started and the blue dot where it
-ended — note how far the particle traveled *in steps* (10,000) versus *in
-distance* (it never leaves a box of ±70):
+A hundred thousand unit steps from a fixed seed. The black lines cross at
+the origin, the green dot is where the walk started and the blue dot where
+it ended — note how far the particle traveled *in steps* (100,000) versus
+*in distance* (it never leaves a box of ±260):
 
-![Random walk of a particle: 10,000 steps starting at the origin, with the start point in green and the end point in blue](img/particle_path.png)
+![Random walk of a particle: 100,000 steps starting at the origin, with the start point in green and the end point in blue](img/particle_path.png)
 
 Because the run is seeded, the figure above is exactly what those two
 commands reproduce.
 
 Representative console output:
 
-```
-  Simulation of the random displacement of a particle.
+```console
+  Simulation of a particle's random walk.
   Seed: 42
-  The results were saved in results/walking_results.json
-  To obtain the graph, run:
+  The results were saved in 'results/walking_results.json'
+  To generate the plot, run:
     python3 plot_results.py
 
-  The graphic was saved in 'img/particle_path.png'
+  The plot was saved in 'img/particle_path.png'
 
-  The charts are located in 'img/' and are version-controlled for the README.
+  The plot is located in 'img/' and is version-controlled for the README.
 ```
 
 ---
@@ -157,23 +157,23 @@ parameter as it asks, or pass everything explicitly:
 
 ```bash
 # Interactive mode (guides you through every option)
-python random_walk.py
+python3 random_walk.py
 
 # 10,000 steps with a fixed seed, saved to results/
-python random_walk.py --steps 10000 --seed 42 --save
+python3 random_walk.py --steps 10000 --seed 42 --save
 
 # A quick run without saving anything
-python random_walk.py --steps 500
+python3 random_walk.py --steps 500
 
 # Generate the plot from the saved results
-python plot_results.py
+python3 plot_results.py
 ```
 
 ### Command-line options
 
 | Option | Description | Default |
 | --- | --- | --- |
-| `--steps Stp` | Unit steps the particle will take (must be positive) | `10000` |
+| `--steps STEPS` | Unit steps the particle will take (must be positive) | `10000` |
 | `--seed S` | Non-negative seed for reproducible results | random |
 | `-s, --save` | Save the results as JSON in `results/` | off |
 | `--force` | Bypass the 1.5 GB memory safety limit (max 6,000,000 steps) | off |
@@ -182,11 +182,13 @@ python plot_results.py
 
 ## Project structure
 
-```
+```text
 random_walk/
+├── README.md          # This file
 ├── random_walk.py     # Simulation, CLI, memory guard, and JSON persistence
 ├── plot_results.py    # Chart from the saved JSON (particle path)
 ├── requirements.txt   # numpy, matplotlib
+├── .gitignore         # Ignores results/, .venv/ and __pycache__/
 ├── results/           # Generated JSON (git-ignored)
 └── img/               # Generated PNGs (versioned for this README)
 ```
