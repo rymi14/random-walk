@@ -141,7 +141,7 @@ Requires **Python 3.10+**.
 
 ```bash
 git clone https://github.com/rymi14/random-walk
-cd random_walk
+cd random-walk
 
 python3 -m venv .venv
 source .venv/bin/activate
@@ -183,7 +183,7 @@ python3 plot_results.py
 ## Project structure
 
 ```text
-random_walk/
+random-walk/
 ├── README.md          # This file
 ├── random_walk.py     # Simulation, CLI, memory guard, and JSON persistence
 ├── plot_results.py    # Chart from the saved JSON (particle path)
