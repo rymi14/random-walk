@@ -140,7 +140,7 @@ Representative console output:
 Requires **Python 3.10+**.
 
 ```bash
-git clone https://github.com/rymi14/random_walk
+git clone https://github.com/rymi14/random-walk
 cd random_walk
 
 python3 -m venv .venv
